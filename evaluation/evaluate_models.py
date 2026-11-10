@@ -43,8 +43,10 @@ def evaluate_models(
 
     X_test = data_dict['X_test']
     y_test = data_dict['y_test']
-    target_classes = data_dict['target_classes']  # ['On Track', 'In Progress', 'At Risk']
     label_encoder = data_dict['label_encoder']
+    # Dynamically derive class names directly from fitted LabelEncoder to guarantee exact index alignment
+    target_classes = list(label_encoder.classes_)  # Guaranteed [0: 'At Risk', 1: 'In Progress', 2: 'On Track']
+    class_indices = list(range(len(target_classes)))
 
     # Get string labels for test set
     y_test_labels = label_encoder.inverse_transform(y_test)
@@ -55,6 +57,7 @@ def evaluate_models(
 
     print("\n" + "=" * 50)
     print("Evaluating Models on Independent Test Set (N = 700)")
+    print(f"Class Index Mapping: {dict(enumerate(target_classes))}")
     print("=" * 50)
 
     for model_name, model in trained_models.items():
@@ -74,35 +77,45 @@ def evaluate_models(
         # Multiclass ROC-AUC (One-vs-Rest)
         try:
             roc_auc_ovr = roc_auc_score(y_test, y_prob, multi_class='ovr', average='macro')
-        except Exception as e:
+        except Exception:
             roc_auc_ovr = np.nan
 
-        # Per-class metrics
+        # Per-class metrics using explicit labels to ensure exact class mapping
         report_dict = classification_report(
             y_test, y_pred,
+            labels=class_indices,
             target_names=target_classes,
             output_dict=True,
             zero_division=0
         )
         classification_reports_dict[model_name] = report_dict
 
-        # At-Risk specific metrics (Index of 'At Risk')
-        at_risk_idx = list(target_classes).index('At Risk')
+        # Extract per-class metrics dynamically by exact class name
         at_risk_prec = report_dict['At Risk']['precision']
         at_risk_rec = report_dict['At Risk']['recall']
         at_risk_f1 = report_dict['At Risk']['f1-score']
 
-        cm = confusion_matrix(y_test, y_pred)
+        on_track_prec = report_dict['On Track']['precision']
+        on_track_rec = report_dict['On Track']['recall']
+        on_track_f1 = report_dict['On Track']['f1-score']
+
+        in_prog_prec = report_dict['In Progress']['precision']
+        in_prog_rec = report_dict['In Progress']['recall']
+        in_prog_f1 = report_dict['In Progress']['f1-score']
+
+        cm = confusion_matrix(y_test, y_pred, labels=class_indices)
         confusion_matrices[model_name] = cm
 
         print(f"\n--- {model_name} Test Results ---")
-        print(f"Accuracy:         {acc:.4f}")
-        print(f"Macro Precision:  {prec_macro:.4f}")
-        print(f"Macro Recall:     {rec_macro:.4f}")
-        print(f"Macro F1-Score:   {f1_macro:.4f}")
-        print(f"Weighted F1-Score:{f1_weighted:.4f}")
+        print(f"Accuracy:                 {acc:.4f}")
+        print(f"Macro Precision:          {prec_macro:.4f}")
+        print(f"Macro Recall:             {rec_macro:.4f}")
+        print(f"Macro F1-Score:           {f1_macro:.4f}")
+        print(f"Weighted F1-Score:        {f1_weighted:.4f}")
         print(f"Multiclass ROC-AUC (OvR): {roc_auc_ovr:.4f}")
-        print(f"--> At Risk Precision: {at_risk_prec:.4f} | Recall: {at_risk_rec:.4f} | F1: {at_risk_f1:.4f}")
+        print(f"--> At Risk    - Precision: {at_risk_prec:.4f} | Recall: {at_risk_rec:.4f} | F1: {at_risk_f1:.4f} (Support: {report_dict['At Risk']['support']})")
+        print(f"--> In Progress- Precision: {in_prog_prec:.4f} | Recall: {in_prog_rec:.4f} | F1: {in_prog_f1:.4f} (Support: {report_dict['In Progress']['support']})")
+        print(f"--> On Track   - Precision: {on_track_prec:.4f} | Recall: {on_track_rec:.4f} | F1: {on_track_f1:.4f} (Support: {report_dict['On Track']['support']})")
 
         comparison_records.append({
             'Model': model_name,
@@ -114,7 +127,10 @@ def evaluate_models(
             'ROC_AUC_OvR': round(float(roc_auc_ovr), 4) if not np.isnan(roc_auc_ovr) else None,
             'At_Risk_Precision': round(float(at_risk_prec), 4),
             'At_Risk_Recall': round(float(at_risk_rec), 4),
-            'At_Risk_F1': round(float(at_risk_f1), 4)
+            'At_Risk_F1': round(float(at_risk_f1), 4),
+            'On_Track_Precision': round(float(on_track_prec), 4),
+            'On_Track_Recall': round(float(on_track_rec), 4),
+            'On_Track_F1': round(float(on_track_f1), 4)
         })
 
     # Save Model Comparison CSV
@@ -192,13 +208,13 @@ def plot_model_comparison(comp_df: pd.DataFrame, results_dir: str):
     """
     Generate grouped bar chart comparing performance metrics across models.
     """
-    metrics = ['Accuracy', 'Macro_Precision', 'Macro_Recall', 'Macro_F1', 'At_Risk_Recall']
-    metric_labels = ['Accuracy', 'Macro Prec', 'Macro Rec', 'Macro F1', 'At-Risk Recall']
+    metrics = ['Accuracy', 'Macro_Precision', 'Macro_Recall', 'Macro_F1', 'At_Risk_Recall', 'On_Track_Recall']
+    metric_labels = ['Accuracy', 'Macro Prec', 'Macro Rec', 'Macro F1', 'At-Risk Recall', 'On-Track Recall']
 
     x = np.arange(len(metrics))
     width = 0.35
 
-    plt.figure(figsize=(9, 5))
+    plt.figure(figsize=(10, 5))
 
     for idx, row in comp_df.iterrows():
         model_name = row['Model']
@@ -236,7 +252,8 @@ def plot_class_distribution(data_dict: Dict[str, Any], results_dir: str):
     """
     y_train = data_dict['y_train']
     y_test = data_dict['y_test']
-    classes = data_dict['target_classes']
+    label_encoder = data_dict['label_encoder']
+    classes = list(label_encoder.classes_)
 
     train_counts = [np.sum(y_train == i) for i in range(len(classes))]
     test_counts = [np.sum(y_test == i) for i in range(len(classes))]

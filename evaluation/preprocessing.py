@@ -50,7 +50,7 @@ NUMERICAL_FEATURES = [
 ]
 
 TARGET_COLUMN = 'risk_category'
-TARGET_CLASSES = ['On Track', 'In Progress', 'At Risk']
+TARGET_CLASSES = ['At Risk', 'In Progress', 'On Track']
 
 
 def create_preprocessor() -> ColumnTransformer:
@@ -127,7 +127,7 @@ def prepare_data(
         'preprocessor': preprocessor,
         'label_encoder': label_encoder,
         'feature_names': all_feature_names,
-        'target_classes': TARGET_CLASSES
+        'target_classes': list(label_encoder.classes_)
     }
 
 

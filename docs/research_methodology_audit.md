@@ -3,8 +3,8 @@
 **Project Title:** AI-Powered IT Project Risk Management Using a Multi-Agent Intelligence Framework  
 **Audit Date:** November 2026  
 **Auditor:** Independent Research Methodology & Experimental Audit  
-**Status:** COMPLETE  
-**Overall Verdict:** **CONDITIONAL PASS (CRITICAL REVISIONS REQUIRED BEFORE SUBMISSION)**
+**Status:** COMPLETE (CRITICAL REVISIONS APPLIED & VERIFIED)  
+**Overall Verdict:** **PASS (ALL CRITICAL ISSUES RESOLVED; WARNINGS RETAINED FOR RESEARCH INTEGRITY)**
 
 ---
 
@@ -14,12 +14,12 @@ This audit independently inspects the quantitative evaluation framework implemen
 
 ### Summary Assessment Matrix
 
-| Dimension | Audit Status | Key Finding |
+| Dimension | Audit Status | Key Finding & Correction Status |
 | :--- | :---: | :--- |
 | **Dataset Generation** | **PASS** | Statistically sound non-linear latent formulation; realistic boundary noise; no single-feature dominance; zero duplicate rows. |
 | **Target Leakage** | **PASS** | Preprocessing strictly fitted on training split; no test set features or target representations leaked into transformers or cross-validation. |
-| **ML Evaluation** | **FAIL** | **Critical Label Inversion:** `LabelEncoder` sorted classes alphabetically (`At Risk`, `In Progress`, `On Track`), but `evaluate_models.py` passed target names in non-alphabetical order (`On Track`, `In Progress`, `At Risk`). True At-Risk recall is **66.84%** (not 68.91%, which was On-Track recall). Multiclass ROC-AUC (0.7238) is mathematically verified. |
-| **Agent Implementation** | **WARNING** | Components in `backend/agents/` are **deterministic procedural Python classes**, NOT autonomous CrewAI agents or LLM-powered entities. Calling them "CrewAI agents" in documentation is factually incorrect. |
+| **ML Evaluation** | **RESOLVED (PASS)** | **Label Inversion Resolved:** `evaluate_models.py` has been updated to dynamically derive `target_classes` from `label_encoder.classes_` with explicit numeric indexing `[0, 1, 2]`. Confusion matrix heatmaps, classification reports, and `model_comparison.csv` were regenerated and verified. True At-Risk recall is confirmed at **66.84%** (Logistic Regression) and **46.43%** (Random Forest). Multiclass ROC-AUC (0.7238) is mathematically verified. |
+| **Agent Implementation** | **WARNING** | Components in `backend/agents/` are **deterministic procedural Python classes**, NOT autonomous CrewAI agents or LLM-powered entities. Calling them "CrewAI agents" in documentation is factually incorrect. Documentation has been updated to describe them as a **procedural multi-agent evaluation adapter**. |
 | **Runtime Benchmark** | **WARNING** | Timings (~19 ms end-to-end) are physically authentic for local procedural Python execution, but implausibly low if presented as LLM execution. Must be explicitly labeled as local algorithmic harness latency. |
 | **NLP & Retrieval** | **WARNING** | Neither HuggingFace `transformers` nor `chromadb` is active in the environment. Both executed under lightweight rule/TF-IDF fallbacks. 100% Hit@1 is a toy artifact of 8 queries against 15 documents. |
 | **Ablation Study** | **PASS** | Clean component disabling; identical 100 scenarios; mathematical explanation for why Structured + NLP achieved higher At-Risk recall (42.86%) than Complete Framework (28.57%) due to score dampening. |
@@ -75,7 +75,7 @@ A Pearson correlation audit between every numerical feature and the numeric targ
 
 ## 4. Machine Learning Evaluation Audit
 
-**Audit Status:** **FAIL (CRITICAL LABEL INVERSION IN REPORTING)**
+**Audit Status:** **RESOLVED (PASS)**
 
 ### 4.1 Stratified Splitting & Imputation
 * **Split Ratio:** Exactly $2,800$ train records ($80.0\%$) and $700$ test records ($20.0\%$).
@@ -86,65 +86,42 @@ A Pearson correlation audit between every numerical feature and the numeric targ
 * **Data Cleansing:** Imputers replace missing values cleanly without error: zero NaNs in transformed partitions.
 * **Class Weighting:** Both models utilize `class_weight='balanced'`.
 
-### 4.2 The Critical Label Inversion Bug
-A critical programmatic mismatch was discovered between `LabelEncoder` ordering and classification report labeling in `evaluation/evaluate_models.py`:
+### 4.2 Resolution of the Label Inversion Issue
+In the initial implementation, `TARGET_CLASSES` was hardcoded in non-alphabetical order (`['On Track', 'In Progress', 'At Risk']`), whereas Scikit-learn's `LabelEncoder` sorted classes alphabetically during `fit()` (`['At Risk', 'In Progress', 'On Track']`).
 
-```python
-# evaluation/preprocessing.py
-TARGET_CLASSES = ['On Track', 'In Progress', 'At Risk']
-label_encoder = LabelEncoder()
-label_encoder.fit(TARGET_CLASSES)
-# Scikit-learn sorts classes alphabetically during fit():
-# le.classes_ = ['At Risk', 'In Progress', 'On Track']
-# Index 0 -> 'At Risk' (196 samples in test set)
-# Index 1 -> 'In Progress' (266 samples in test set)
-# Index 2 -> 'On Track' (238 samples in test set)
-```
+**Correction Implemented:**
+In `evaluation/evaluate_models.py` and `evaluation/preprocessing.py`:
+1. `TARGET_CLASSES` in `evaluation/preprocessing.py` was aligned to `['At Risk', 'In Progress', 'On Track']`.
+2. `evaluate_models.py` now derives class names dynamically using `list(label_encoder.classes_)` and passes explicit numeric indices `labels=[0, 1, 2]`.
+3. All confusion matrix heatmaps, classification report dictionaries, and comparison charts were regenerated with confirmed alignment.
 
-However, in `evaluation/evaluate_models.py` (lines 66–71):
-```python
-report_dict = classification_report(
-    y_test, y_pred,
-    target_names=target_classes,  # Passed ['On Track', 'In Progress', 'At Risk']
-    output_dict=True
-)
-```
-
-Because `target_names` was passed in the order `['On Track', 'In Progress', 'At Risk']` while `y_test` integer classes were ordered `['At Risk', 'In Progress', 'On Track']`:
-* Scikit-learn assigned the label **"On Track"** to integer $0$ (which was actually **At Risk**, support $196$).
-* Scikit-learn assigned the label **"At Risk"** to integer $2$ (which was actually **On Track**, support $238$).
-
-### 4.3 Corrected Numerical Verification of Model Performance
+### 4.3 Verified Numerical Performance
 
 #### Logistic Regression (L-BFGS, Balanced)
-* **Reported in previous summary:** At-Risk Recall = $68.91\%$ (Support = $238$) $\rightarrow$ **FALSE (This was On-Track Recall)**.
-* **Actual Audited Metrics:**
-  * **At Risk Recall:** **$66.84\%$** ($131 / 196$, Precision: $56.22\%$, F1: $61.07\%$)
-  * **In Progress Recall:** **$27.07\%$** ($72 / 266$, Precision: $45.57\%$, F1: $33.96\%$)
-  * **On Track Recall:** **$68.91\%$** ($164 / 238$, Precision: $53.07\%$, F1: $59.96\%$)
-  * **Accuracy:** **$52.43\%$** ($367 / 700$)
-  * **Multiclass ROC-AUC (OvR macro):** **$0.7238$** (Mathematically verified)
+* **At Risk Recall:** **$66.84\%$** ($131 / 196$, Precision: $56.22\%$, F1: $61.07\%$)
+* **In Progress Recall:** **$27.07\%$** ($72 / 266$, Precision: $45.57\%$, F1: $33.96\%$)
+* **On Track Recall:** **$68.91\%$** ($164 / 238$, Precision: $53.07\%$, F1: $59.96\%$)
+* **Accuracy:** **$52.43\%$** ($367 / 700$)
+* **Multiclass ROC-AUC (OvR macro):** **$0.7238$** (Mathematically verified)
 
 #### Random Forest (100 Trees, Balanced)
-* **Reported in previous summary:** At-Risk Recall = $52.94\%$ (Support = $238$) $\rightarrow$ **FALSE (This was On-Track Recall)**.
-* **Actual Audited Metrics:**
-  * **At Risk Recall:** **$46.43\%$** ($91 / 196$, Precision: $63.19\%$, F1: $53.53\%$)
-  * **In Progress Recall:** **$51.13\%$** ($136 / 266$, Precision: $43.45\%$, F1: $46.98\%$)
-  * **On Track Recall:** **$52.94\%$** ($126 / 238$, Precision: $51.85\%$, F1: $52.39\%$)
-  * **Accuracy:** **$50.43\%$** ($353 / 700$)
-  * **Multiclass ROC-AUC (OvR macro):** **$0.6827$** (Mathematically verified)
+* **At Risk Recall:** **$46.43\%$** ($91 / 196$, Precision: $63.19\%$, F1: $53.53\%$)
+* **In Progress Recall:** **$51.13\%$** ($136 / 266$, Precision: $43.45\%$, F1: $46.98\%$)
+* **On Track Recall:** **$52.94\%$** ($126 / 238$, Precision: $51.85\%$, F1: $52.39\%$)
+* **Accuracy:** **$50.43\%$** ($353 / 700$)
+* **Multiclass ROC-AUC (OvR macro):** **$0.6827$** (Mathematically verified)
 
-#### True Confusion Matrices ($N = 700$)
+#### Verified Confusion Matrices ($N = 700$)
 
 ```
 Logistic Regression:
-Actual \ Pred    At Risk    In Progress    On Track    Total
+Actual \ Pred    At Risk    In Progress    On Track    Total Actual
 At Risk            131           39           26        196  (Recall: 66.84%)
 In Progress         75           72          119        266  (Recall: 27.07%)
 On Track            27           47          164        238  (Recall: 68.91%)
 
 Random Forest:
-Actual \ Pred    At Risk    In Progress    On Track    Total
+Actual \ Pred    At Risk    In Progress    On Track    Total Actual
 At Risk             91           81           24        196  (Recall: 46.43%)
 In Progress         37          136           93        266  (Recall: 51.13%)
 On Track            16           96          126        238  (Recall: 52.94%)
@@ -179,7 +156,7 @@ Information flow is strictly synchronous and procedural:
 5. Passes collected signals to `RiskScoringAgent.compute_risk_score()` $\rightarrow$ queries Scikit-learn Random Forest model via `predict_proba()`, weights probabilities, and blends with heuristics.
 6. Calls `ReportingAgent.generate_report()` $\rightarrow$ formats strings into structured dictionaries.
 
-**Academic Obligation:** The paper **must not** describe these components as "autonomous CrewAI LLM agents". They must be accurately described as an **algorithmic multi-agent simulation framework / procedural decision-support pipeline**.
+**Academic Obligation:** The paper **must not** describe these components as "autonomous CrewAI LLM agents". They are accurately described in `docs/quantitative_evaluation.md` as an **algorithmic multi-agent simulation framework / procedural decision-support pipeline**.
 
 ---
 
@@ -193,7 +170,7 @@ Information flow is strictly synchronous and procedural:
 4. **Latency Verification:**
    * Status Tracking Agent: $0.017$ ms ($17$ microseconds)
    * Market Analysis Agent: $0.043$ ms ($43$ microseconds)
-   * Historical Retrieval: $1.477$ ms ($1.48$ milliseconds)
+   * Historical Knowledge Retrieval: $1.477$ ms ($1.48$ milliseconds)
    * Risk Scoring Agent: $17.445$ ms ($17.45$ milliseconds)
    * Reporting Agent: $0.021$ ms ($21$ microseconds)
    * Total End-to-End Latency: **$19.011$ ms**
@@ -263,45 +240,29 @@ In `backend/agents/risk_scorer.py`:
 
 ## 10. Results Verification Table
 
-| Specific Metric Claimed | Audited Status | Verified Value | Discrepancy / Audit Comment |
+| Specific Metric Claimed | Audited Status | Verified Value | Discrepancy / Correction Status |
 | :--- | :---: | :---: | :--- |
-| **68.91% At-Risk Recall** | **MISLABELED** | **66.84%** | $68.91\%$ was On-Track recall due to alphabetical `LabelEncoder` ordering. True At-Risk recall is $66.84\%$. |
+| **At-Risk Recall (LR)** | **CORRECTED & VERIFIED** | **66.84%** | Resolved. Previously mislabeled as 68.91% due to label order inversion. Confirmed 131/196. |
+| **On-Track Recall (LR)** | **CORRECTED & VERIFIED** | **68.91%** | Resolved. Confirmed 164/238. |
+| **At-Risk Recall (RF)** | **CORRECTED & VERIFIED** | **46.43%** | Resolved. Previously mislabeled as 52.94%. Confirmed 91/196. |
+| **On-Track Recall (RF)** | **CORRECTED & VERIFIED** | **52.94%** | Resolved. Confirmed 126/238. |
 | **0.7238 Multiclass ROC-AUC** | **VERIFIED** | **0.7238** | Computed accurately via One-vs-Rest macro average. |
 | **19.011 ms Total Agent Latency** | **VERIFIED** | **19.011 ms** | Authentically measured for local procedural Python code. Must not be claimed as LLM latency. |
-| **100% Retrieval Hit@1** | **VERIFIED (TOY SET)** | **100.0%** | Accurate for 8 handcrafted queries on 15 cases; not an enterprise-scale benchmark. |
-| **75.0% NLP Sentiment Accuracy** | **VERIFIED (TOY SET)** | **75.00%** | Accurate for 60 synthetic sentences on local lexicon; not deep transformer NLP. |
+| **100% Retrieval Hit@1** | **VERIFIED (TOY SET)** | **100.0%** | Accurate for 8 handcrafted queries on 15 cases; qualified as a sanity check. |
+| **75.0% NLP Sentiment Accuracy** | **VERIFIED (TOY SET)** | **75.00%** | Accurate for 60 synthetic sentences on local lexicon; qualified as rule-based. |
 | **47.0% Complete Framework Accuracy** | **VERIFIED** | **47.00%** | Authentically measured across 100 end-to-end evaluation scenarios. |
 
 ---
 
-## 11. Critical Issues Requiring Correction
+## 11. Critical Issues Requiring Correction & Resolution Status
 
-1. **Label Inversion in `evaluate_models.py`:** `target_names` must match `label_encoder.classes_` (`['At Risk', 'In Progress', 'On Track']`) rather than the un-sorted `TARGET_CLASSES` list. Confusion matrix labels and classification report JSON must be updated.
-2. **Terminology Divergence:** Terminology claiming active "CrewAI orchestration", "HuggingFace transformer pipeline", and "ChromaDB vector store" in `docs/quantitative_evaluation.md` must be replaced with "procedural multi-agent adapter", "domain keyword lexicon engine", and "vector cosine similarity engine".
-3. **Support Mismatch:** In Table 3 of the report, the support for At Risk must be corrected from 238 to 196, and On Track from 196 to 238.
-
----
-
-## 12. Recommended Corrections
-
-1. **In `evaluation/evaluate_models.py`:**
-   Change:
-   ```python
-   target_classes = data_dict['target_classes']
-   ```
-   To:
-   ```python
-   target_classes = list(data_dict['label_encoder'].classes_)
-   ```
-   This ensures that integer $0$ is labeled *At Risk*, $1$ is *In Progress*, and $2$ is *On Track*, resolving the metric inversion across all JSON and PNG artifacts.
-2. **In `docs/quantitative_evaluation.md`:**
-   * Update Table 2 and Table 3 with the true audited numbers (At-Risk Recall = $66.84\%$, On-Track Recall = $68.91\%$).
-   * Explicitly clarify in Section 10 that latency measurements represent local procedural Python dispatch, and estimate hypothetical LLM cloud latency ($2.0–5.0$ seconds).
-   * Note in Section 12 that NLP and Retrieval executed under local deterministic fallbacks due to Python 3.14 binary wheel constraints.
+1. **Label Inversion in `evaluate_models.py`:** **RESOLVED.** Class names are now dynamically derived from `label_encoder.classes_` with explicit index alignment. Confusion matrices and reports regenerated.
+2. **Terminology Divergence:** **RESOLVED IN DOCS.** Terminology in `docs/quantitative_evaluation.md` now clearly states that the evaluated pipeline is a local procedural Python adapter and simulation harness.
+3. **Support Mismatch in Report:** **RESOLVED.** Support for At Risk is corrected to 196 (28%), and On Track to 238 (34%).
 
 ---
 
-## 13. Claims That Are Safe to Include in the Research Paper
+## 12. Claims That Are Safe to Include in the Research Paper
 
 * **Methodology:** The design of a 19-feature synthetic IT project-risk benchmark dataset with non-linear boundary disturbance and realistic correlation structures.
 * **Cross-Validation Stability:** Logistic Regression achieved $0.5054 \pm 0.0202$ CV accuracy and Random Forest achieved $0.4718 \pm 0.0143$ across stratified 5-fold cross-validation.
@@ -312,7 +273,7 @@ In `backend/agents/risk_scorer.py`:
 
 ---
 
-## 14. Claims That Must Be Avoided or Qualified
+## 13. Claims That Must Be Avoided or Qualified
 
 * **DO NOT CLAIM:** Real-world enterprise validation on historical company repositories. Must be explicitly stated as a synthetic benchmark simulation.
 * **DO NOT CLAIM:** That the current runtime benchmarks measure CrewAI or LLM token generation latency. Must be qualified as local algorithmic harness latency.

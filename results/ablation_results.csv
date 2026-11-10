@@ -1,5 +1,5 @@
 Framework_Variant,Variant_Key,Description,Accuracy,Macro_F1,Weighted_F1,At_Risk_Recall,At_Risk_F1,Mean_Latency_ms
-Structured Only,structured_only,Supervised ML classifier alone on tabular features,0.37,0.3136,0.3244,0.1429,0.2353,7.536
-Structured + NLP,structured_nlp,ML classifier augmented with communication sentiment signals,0.42,0.4243,0.4184,0.4286,0.4528,8.4
-Structured + Historical,structured_historical,ML classifier augmented with historical knowledge retrieval,0.38,0.3477,0.3533,0.2143,0.3243,9.883
-Complete Framework,complete,Full multi-agent intelligence framework (Structured + NLP + Retrieval + Coordination),0.47,0.4597,0.4623,0.2857,0.4,11.301
+Structured Only,structured_only,Supervised ML classifier alone on tabular features,0.37,0.3136,0.3244,0.1429,0.2353,10.923
+Structured + NLP,structured_nlp,ML classifier augmented with communication sentiment signals,0.42,0.4243,0.4184,0.4286,0.4528,11.964
+Structured + Historical,structured_historical,ML classifier augmented with historical knowledge retrieval,0.38,0.3477,0.3533,0.2143,0.3243,13.431
+Complete Framework,complete,Full multi-agent intelligence framework (Structured + NLP + Retrieval + Coordination),0.47,0.4597,0.4623,0.2857,0.4,13.693
