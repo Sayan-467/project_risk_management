@@ -15,7 +15,14 @@ from sklearn.ensemble import RandomForestClassifier
 # 2. Load Dataset
 # ================================
 
-df = pd.read_csv("/Users/stutisamanta/Desktop/financial_risk_management/data/credit_risk_dataset.csv")
+import os
+
+# Resolve path relative to this script or current working directory
+data_path = os.path.join(os.path.dirname(__file__), "../../data/credit_risk_dataset.csv")
+if not os.path.exists(data_path):
+    data_path = "data/credit_risk_dataset.csv"
+
+df = pd.read_csv(data_path)
 
 print("Dataset Shape:", df.shape)
 print(df.head())

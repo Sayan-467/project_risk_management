@@ -1,0 +1,71 @@
+{
+    "benchmark_metadata": {
+        "iterations": 30,
+        "timing_method": "time.perf_counter()",
+        "unit": "milliseconds (ms)",
+        "initialization_and_model_loading_ms": 32.812,
+        "runtime_environment": "Local Multi-Agent Evaluation Harness (Deterministic Benchmarked)",
+        "external_credentials_status": "No external cloud API keys required (local execution)",
+        "unmeasured_capabilities": [
+            "External commercial LLM API cloud latency (e.g. OpenAI/Anthropic network RTT)"
+        ]
+    },
+    "components": {
+        "Project Status Tracking Agent": {
+            "mean_ms": 0.017,
+            "median_ms": 0.015,
+            "std_ms": 0.006,
+            "min_ms": 0.007,
+            "max_ms": 0.033,
+            "p95_ms": 0.028
+        },
+        "Market Analysis Agent": {
+            "mean_ms": 0.043,
+            "median_ms": 0.038,
+            "std_ms": 0.015,
+            "min_ms": 0.023,
+            "max_ms": 0.086,
+            "p95_ms": 0.076
+        },
+        "Historical Knowledge Retrieval": {
+            "mean_ms": 1.477,
+            "median_ms": 1.319,
+            "std_ms": 0.392,
+            "min_ms": 0.848,
+            "max_ms": 2.419,
+            "p95_ms": 2.191
+        },
+        "Risk Scoring Agent": {
+            "mean_ms": 17.445,
+            "median_ms": 16.88,
+            "std_ms": 3.904,
+            "min_ms": 12.43,
+            "max_ms": 28.684,
+            "p95_ms": 26.73
+        },
+        "Reporting Agent": {
+            "mean_ms": 0.021,
+            "median_ms": 0.019,
+            "std_ms": 0.007,
+            "min_ms": 0.011,
+            "max_ms": 0.048,
+            "p95_ms": 0.035
+        },
+        "Project Risk Manager (Coordinator)": {
+            "mean_ms": 0.009,
+            "median_ms": 0.007,
+            "std_ms": 0.006,
+            "min_ms": 0.005,
+            "max_ms": 0.041,
+            "p95_ms": 0.013
+        },
+        "Total End-to-End Workflow": {
+            "mean_ms": 19.011,
+            "median_ms": 18.454,
+            "std_ms": 4.202,
+            "min_ms": 13.486,
+            "max_ms": 31.193,
+            "p95_ms": 28.838
+        }
+    }
+}

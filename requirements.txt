@@ -8,3 +8,4 @@ crewai
 langchain
 chromadb
 huggingface_hub
+matplotlib

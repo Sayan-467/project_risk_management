@@ -1,0 +1,3 @@
+Model,Accuracy,Macro_Precision,Macro_Recall,Macro_F1,Weighted_F1,ROC_AUC_OvR,At_Risk_Precision,At_Risk_Recall,At_Risk_F1
+Logistic Regression,0.5243,0.5162,0.5427,0.5167,0.5039,0.7238,0.5307,0.6891,0.5996
+Random Forest,0.5043,0.5283,0.5017,0.5097,0.5065,0.6827,0.5185,0.5294,0.5239

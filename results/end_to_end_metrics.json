@@ -1,0 +1,66 @@
+{
+    "evaluation_type": "Synthetic End-to-End Multi-Agent Assessment",
+    "sample_size": 100,
+    "classes": [
+        "On Track",
+        "In Progress",
+        "At Risk"
+    ],
+    "accuracy": 0.47,
+    "macro_precision": 0.5183,
+    "macro_recall": 0.459,
+    "macro_f1": 0.4597,
+    "weighted_f1": 0.4623,
+    "per_class_metrics": {
+        "On Track": {
+            "precision": 0.4884,
+            "recall": 0.6176,
+            "f1_score": 0.5455,
+            "support": 34
+        },
+        "In Progress": {
+            "precision": 0.4,
+            "recall": 0.4737,
+            "f1_score": 0.4337,
+            "support": 38
+        },
+        "At Risk": {
+            "precision": 0.6667,
+            "recall": 0.2857,
+            "f1_score": 0.4,
+            "support": 28
+        }
+    },
+    "confusion_matrix": {
+        "matrix": [
+            [
+                21,
+                13,
+                0
+            ],
+            [
+                16,
+                18,
+                4
+            ],
+            [
+                6,
+                14,
+                8
+            ]
+        ],
+        "labels": [
+            "On Track",
+            "In Progress",
+            "At Risk"
+        ]
+    },
+    "latency_summary_ms": {
+        "mean": 15.061,
+        "median": 13.07,
+        "std": 7.175,
+        "min": 6.534,
+        "max": 35.925,
+        "p95": 27.833
+    }
+}

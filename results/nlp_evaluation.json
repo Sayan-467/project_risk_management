@@ -1,0 +1,115 @@
+{
+    "nlp_engine": "Domain Lexicon Engine (Local deterministic)",
+    "model_name": "IT-Project-Risk-Lexicon-v1",
+    "sample_count": 60,
+    "target_classes": [
+        "Positive",
+        "Neutral",
+        "Negative"
+    ],
+    "accuracy": 0.75,
+    "macro_precision": 0.8378,
+    "macro_recall": 0.75,
+    "macro_f1": 0.7533,
+    "weighted_f1": 0.7533,
+    "per_class_metrics": {
+        "Positive": {
+            "precision": 0.9375,
+            "recall": 0.75,
+            "f1_score": 0.8333,
+            "support": 20
+        },
+        "Neutral": {
+            "precision": 0.5758,
+            "recall": 0.95,
+            "f1_score": 0.717,
+            "support": 20
+        },
+        "Negative": {
+            "precision": 1.0,
+            "recall": 0.55,
+            "f1_score": 0.7097,
+            "support": 20
+        }
+    },
+    "confusion_matrix": {
+        "matrix": [
+            [
+                15,
+                5,
+                0
+            ],
+            [
+                1,
+                19,
+                0
+            ],
+            [
+                0,
+                9,
+                11
+            ]
+        ],
+        "labels": [
+            "Positive",
+            "Neutral",
+            "Negative"
+        ]
+    },
+    "latency_stats_ms": {
+        "mean": 0.011,
+        "median": 0.01,
+        "std": 0.005,
+        "p95": 0.014
+    },
+    "sample_evaluations": [
+        {
+            "text": "Sprint goals were delivered ahead of schedule with zero critical blockers.",
+            "ground_truth": "Positive",
+            "predicted": "Positive",
+            "polarity": 0.3333,
+            "confidence": 0.65,
+            "latency_ms": 0.044
+        },
+        {
+            "text": "Great job team! All integration tests passed cleanly and client demo was approved.",
+            "ground_truth": "Positive",
+            "predicted": "Positive",
+            "polarity": 1.0,
+            "confidence": 0.95,
+            "latency_ms": 0.018
+        },
+        {
+            "text": "The performance optimization improved database throughput by 40% and latency is minimal.",
+            "ground_truth": "Positive",
+            "predicted": "Positive",
+            "polarity": 1.0,
+            "confidence": 0.95,
+            "latency_ms": 0.035
+        },
+        {
+            "text": "Architecture refactor is highly stable, reliable, and our release velocity is accelerating.",
+            "ground_truth": "Positive",
+            "predicted": "Positive",
+            "polarity": 1.0,
+            "confidence": 0.95,
+            "latency_ms": 0.014
+        },
+        {
+            "text": "Stakeholder approved milestone deliverables and praised the team's collaborative efficiency.",
+            "ground_truth": "Positive",
+            "predicted": "Positive",
+            "polarity": 1.0,
+            "confidence": 0.95,
+            "latency_ms": 0.011
+        },
+        {
+            "text": "CI CD pipelines are running smoothly; unit test coverage reached an impressive 92%.",
+            "ground_truth": "Positive",
+            "predicted": "Neutral",
+            "polarity": 0.0,
+            "confidence": 0.5,
+            "latency_ms": 0.013
+        }
+    ]
+}
