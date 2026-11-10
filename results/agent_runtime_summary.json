@@ -3,7 +3,7 @@
         "iterations": 30,
         "timing_method": "time.perf_counter()",
         "unit": "milliseconds (ms)",
-        "initialization_and_model_loading_ms": 32.812,
+        "initialization_and_model_loading_ms": 110.243,
         "runtime_environment": "Local Multi-Agent Evaluation Harness (Deterministic Benchmarked)",
         "external_credentials_status": "No external cloud API keys required (local execution)",
         "unmeasured_capabilities": [
@@ -12,60 +12,60 @@
     },
     "components": {
         "Project Status Tracking Agent": {
-            "mean_ms": 0.017,
-            "median_ms": 0.015,
-            "std_ms": 0.006,
-            "min_ms": 0.007,
-            "max_ms": 0.033,
-            "p95_ms": 0.028
+            "mean_ms": 0.008,
+            "median_ms": 0.006,
+            "std_ms": 0.005,
+            "min_ms": 0.003,
+            "max_ms": 0.027,
+            "p95_ms": 0.018
         },
         "Market Analysis Agent": {
-            "mean_ms": 0.043,
-            "median_ms": 0.038,
-            "std_ms": 0.015,
-            "min_ms": 0.023,
-            "max_ms": 0.086,
-            "p95_ms": 0.076
+            "mean_ms": 0.02,
+            "median_ms": 0.017,
+            "std_ms": 0.008,
+            "min_ms": 0.013,
+            "max_ms": 0.044,
+            "p95_ms": 0.038
         },
         "Historical Knowledge Retrieval": {
-            "mean_ms": 1.477,
-            "median_ms": 1.319,
-            "std_ms": 0.392,
-            "min_ms": 0.848,
-            "max_ms": 2.419,
-            "p95_ms": 2.191
+            "mean_ms": 0.653,
+            "median_ms": 0.511,
+            "std_ms": 0.314,
+            "min_ms": 0.409,
+            "max_ms": 1.818,
+            "p95_ms": 1.209
         },
         "Risk Scoring Agent": {
-            "mean_ms": 17.445,
-            "median_ms": 16.88,
-            "std_ms": 3.904,
-            "min_ms": 12.43,
-            "max_ms": 28.684,
-            "p95_ms": 26.73
+            "mean_ms": 7.664,
+            "median_ms": 6.3,
+            "std_ms": 2.636,
+            "min_ms": 5.376,
+            "max_ms": 16.387,
+            "p95_ms": 12.52
         },
         "Reporting Agent": {
-            "mean_ms": 0.021,
-            "median_ms": 0.019,
-            "std_ms": 0.007,
-            "min_ms": 0.011,
-            "max_ms": 0.048,
-            "p95_ms": 0.035
+            "mean_ms": 0.011,
+            "median_ms": 0.008,
+            "std_ms": 0.011,
+            "min_ms": 0.005,
+            "max_ms": 0.068,
+            "p95_ms": 0.019
         },
         "Project Risk Manager (Coordinator)": {
-            "mean_ms": 0.009,
-            "median_ms": 0.007,
-            "std_ms": 0.006,
-            "min_ms": 0.005,
-            "max_ms": 0.041,
-            "p95_ms": 0.013
+            "mean_ms": 0.003,
+            "median_ms": 0.003,
+            "std_ms": 0.002,
+            "min_ms": 0.001,
+            "max_ms": 0.009,
+            "p95_ms": 0.007
         },
         "Total End-to-End Workflow": {
-            "mean_ms": 19.011,
-            "median_ms": 18.454,
-            "std_ms": 4.202,
-            "min_ms": 13.486,
-            "max_ms": 31.193,
-            "p95_ms": 28.838
+            "mean_ms": 8.359,
+            "median_ms": 6.781,
+            "std_ms": 2.889,
+            "min_ms": 5.819,
+            "max_ms": 17.583,
+            "p95_ms": 14.127
         }
     }
 }

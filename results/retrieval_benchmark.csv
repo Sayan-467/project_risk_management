@@ -1,9 +1,9 @@
 Query_ID,Query_Text,Engine,Hit_at_1,Hit_at_3,Precision_at_3,Mean_Latency_ms,Median_Latency_ms,P95_Latency_ms,Top_Retrieved_ID,Top_Retrieved_Title
-Q-01,severe schedule delay due to scope creep and architect attrition,Vector Cosine Similarity (TF-IDF Space),1,1,0.667,1.19,1.032,1.724,CASE-001,Core Banking Agile Migration
-Q-02,excessive bug count and test pass failure in healthcare UAT,Vector Cosine Similarity (TF-IDF Space),1,1,1.0,1.078,0.927,2.115,CASE-007,SaaS Customer Billing Platform Refactor
-Q-03,cloud infrastructure budget overrun and spark query optimization,Vector Cosine Similarity (TF-IDF Space),1,1,1.0,1.098,1.051,1.548,CASE-009,Enterprise Data Lakehouse Migration
-Q-04,team burnout and high resource utilization in retail delivery,Vector Cosine Similarity (TF-IDF Space),1,1,0.667,1.3,1.176,1.961,CASE-003,Omnichannel E-Commerce Scalability Overhaul
-Q-05,communication breakdown between hardware and cloud teams with unresolved blockers,Vector Cosine Similarity (TF-IDF Space),1,1,0.667,1.4,1.276,2.571,CASE-004,Autonomous Fleet Telematics Gateway
-Q-06,successful fintech mobile rollout with high test pass rate and automated CI CD,Vector Cosine Similarity (TF-IDF Space),1,1,0.667,1.372,1.378,1.778,CASE-005,Cross-Border Payment Gateway Upgrade
-Q-07,regulatory compliance blocker and supply chain delay in aviation,Vector Cosine Similarity (TF-IDF Space),1,1,0.333,1.655,1.381,2.742,CASE-010,In-Flight Entertainment Wireless Streaming
-Q-08,AI chatbot hallucination risks and prompt safeguard failures,Vector Cosine Similarity (TF-IDF Space),1,1,0.333,1.553,1.448,2.383,CASE-011,AI Conversational Support Bot Implementation
+Q-01,severe schedule delay due to scope creep and architect attrition,Vector Cosine Similarity (TF-IDF Space),1,1,0.667,0.71,0.76,1.105,CASE-001,Core Banking Agile Migration
+Q-02,excessive bug count and test pass failure in healthcare UAT,Vector Cosine Similarity (TF-IDF Space),1,1,1.0,0.537,0.46,0.882,CASE-007,SaaS Customer Billing Platform Refactor
+Q-03,cloud infrastructure budget overrun and spark query optimization,Vector Cosine Similarity (TF-IDF Space),1,1,1.0,0.453,0.383,0.843,CASE-009,Enterprise Data Lakehouse Migration
+Q-04,team burnout and high resource utilization in retail delivery,Vector Cosine Similarity (TF-IDF Space),1,1,0.667,0.489,0.42,0.92,CASE-003,Omnichannel E-Commerce Scalability Overhaul
+Q-05,communication breakdown between hardware and cloud teams with unresolved blockers,Vector Cosine Similarity (TF-IDF Space),1,1,0.667,0.462,0.391,0.801,CASE-004,Autonomous Fleet Telematics Gateway
+Q-06,successful fintech mobile rollout with high test pass rate and automated CI CD,Vector Cosine Similarity (TF-IDF Space),1,1,0.667,0.445,0.33,0.982,CASE-005,Cross-Border Payment Gateway Upgrade
+Q-07,regulatory compliance blocker and supply chain delay in aviation,Vector Cosine Similarity (TF-IDF Space),1,1,0.333,0.633,0.603,0.852,CASE-010,In-Flight Entertainment Wireless Streaming
+Q-08,AI chatbot hallucination risks and prompt safeguard failures,Vector Cosine Similarity (TF-IDF Space),1,1,0.333,1.321,0.872,2.872,CASE-011,AI Conversational Support Bot Implementation
